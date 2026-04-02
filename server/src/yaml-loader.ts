@@ -37,11 +37,18 @@ function preprocessToolDefinition(tool: any): ToolDefinition {
   }
 
   // Create the tool definition in standard format
-  return {
+  const toolDef: ToolDefinition = {
     name: tool.name,
     description: tool.description,
     inputSchema
   };
+  
+  // Add outputSchema if it exists
+  if (tool.outputSchema) {
+    toolDef.outputSchema = tool.outputSchema;
+  }
+  
+  return toolDef;
 }
 
 // Parse YAML
@@ -99,6 +106,7 @@ interface ToolDefinition {
   name: string;
   description: string;
   inputSchema: any;
+  outputSchema?: any;
 }
 
 // Convert JSON Schema to Zod schema
@@ -200,7 +208,8 @@ for (const tool of toolsConfig.tools) {
     name: tool.name,
     description: tool.description,
     inputSchema: zodSchema,
-    jsonSchema: tool.inputSchema  // Keep original JSON Schema for MCP
+    jsonSchema: tool.inputSchema,  // Keep original JSON Schema for MCP
+    outputSchema: tool.outputSchema  // Pass through if defined in YAML
   };
 }
 

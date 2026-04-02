@@ -14,7 +14,8 @@ export class ToolHandler {
     return allTools.map(tool => ({
       name: tool.name,
       description: tool.description,
-      inputSchema: (tool as any).jsonSchema || tool.inputSchema
+      inputSchema: (tool as any).jsonSchema || tool.inputSchema,
+      outputSchema: (tool as any).outputSchema
     }));
   }
 
