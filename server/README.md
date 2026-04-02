@@ -51,7 +51,7 @@ This single command starts the server and handles stdio communication:
   "mcpServers": {
     "kapture": {
       "command": "npx",
-      "args": ["-y", "kapture-mcp", "bridge"]
+      "args": ["-y", "kapture-mcp@latest", "bridge"]
     }
   }
 }
@@ -102,7 +102,7 @@ Claude Desktop (claude_desktop_config.json):
   "mcpServers": {
     "kapture": {
       "command": "npx",
-      "args": ["-y", "kapture-mcp", "bridge"]
+      "args": ["-y", "kapture-mcp@latest", "bridge"]
     }
   }
 }

@@ -10,6 +10,11 @@ interface AssistantConfig {
     win32?: string;
     linux?: string;
   };
+  appPaths?: {
+    darwin?: string;
+    win32?: string;
+    linux?: string;
+  };
   configKey: string;
 }
 
@@ -26,6 +31,11 @@ const ASSISTANTS: Record<string, AssistantConfig> = {
       darwin: join(homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json'),
       win32: join(process.env.APPDATA || '', 'Claude', 'claude_desktop_config.json'),
       linux: join(homedir(), '.config', 'Claude', 'claude_desktop_config.json')
+    },
+    appPaths: {
+      darwin: '/Applications/Claude.app',
+      win32: join(process.env.PROGRAMFILES || '', 'Claude', 'Claude.exe'),
+      linux: '/usr/bin/claude-desktop'
     },
     configKey: 'mcpServers'
   },
@@ -45,6 +55,11 @@ const ASSISTANTS: Record<string, AssistantConfig> = {
       win32: join(process.env.APPDATA || '', 'Code', 'User', 'settings.json'),
       linux: join(homedir(), '.config', 'Code', 'User', 'settings.json')
     },
+    appPaths: {
+      darwin: '/Applications/Visual Studio Code.app',
+      win32: join(process.env.PROGRAMFILES || '', 'Microsoft VS Code', 'Code.exe'),
+      linux: '/usr/bin/code'
+    },
     configKey: 'mcp.servers'
   },
   'Cursor': {
@@ -53,6 +68,11 @@ const ASSISTANTS: Record<string, AssistantConfig> = {
       darwin: join(homedir(), '.cursor', 'mcp.json'),
       win32: join(homedir(), '.cursor', 'mcp.json'),
       linux: join(homedir(), '.cursor', 'mcp.json')
+    },
+    appPaths: {
+      darwin: '/Applications/Cursor.app',
+      win32: join(process.env.LOCALAPPDATA || '', 'Programs', 'cursor', 'Cursor.exe'),
+      linux: '/usr/bin/cursor'
     },
     configKey: 'mcpServers'
   },
@@ -81,12 +101,12 @@ function isKaptureConfigured(configPath: string, configKey: string): boolean {
     const config = readConfig(configPath);
     const keys = configKey.split('.');
     let section = config;
-    
+
     for (const key of keys) {
       if (!section[key]) return false;
       section = section[key];
     }
-    
+
     return !!section.kapture;
   } catch {
     return false;
@@ -95,7 +115,7 @@ function isKaptureConfigured(configPath: string, configKey: string): boolean {
 
 const KAPTURE_MCP_CONFIG = {
   command: "npx",
-  args: ["-y", "kapture-mcp", "bridge"]
+  args: ["-y", "kapture-mcp@latest", "bridge"]
 };
 
 function writeConfig(configPath: string, config: any): void {
@@ -114,7 +134,7 @@ function updateAssistantConfig(name: string, configure: boolean): { success: boo
 
   const currentPlatform = platform() as 'darwin' | 'win32' | 'linux';
   const configPath = config.configPaths[currentPlatform];
-  
+
   if (!configPath) {
     return { success: false, error: 'Platform not supported' };
   }
@@ -126,11 +146,11 @@ function updateAssistantConfig(name: string, configure: boolean): { success: boo
 
   try {
     const currentConfig = readConfig(configPath);
-    
+
     // Handle different config key structures (e.g., "mcp.servers" vs "mcpServers")
     const keys = config.configKey.split('.');
     let configSection = currentConfig;
-    
+
     for (let i = 0; i < keys.length - 1; i++) {
       if (!configSection[keys[i]]) {
         if (configure) {
@@ -142,7 +162,7 @@ function updateAssistantConfig(name: string, configure: boolean): { success: boo
       }
       configSection = configSection[keys[i]];
     }
-    
+
     const finalKey = keys[keys.length - 1];
     if (configure) {
       // Add or update Kapture configuration
@@ -154,14 +174,14 @@ function updateAssistantConfig(name: string, configure: boolean): { success: boo
       // Remove Kapture configuration
       if (configSection[finalKey] && configSection[finalKey].kapture) {
         delete configSection[finalKey].kapture;
-        
+
         // Clean up empty objects
         if (Object.keys(configSection[finalKey]).length === 0) {
           delete configSection[finalKey];
         }
       }
     }
-    
+
     writeConfig(configPath, currentConfig);
     return { success: true };
   } catch (error: any) {
@@ -175,11 +195,25 @@ export function detectAssistants(): Record<string, AssistantStatus> {
 
   for (const [name, config] of Object.entries(ASSISTANTS)) {
     const configPath = config.configPaths[currentPlatform];
-    
+    const appPath = config.appPaths?.[currentPlatform];
+
     if (configPath) {
-      const installed = existsSync(configPath);
-      const configured = installed && isKaptureConfigured(configPath, config.configKey);
-      
+      // Check if app is installed by looking for app path or config directory
+      let installed = false;
+
+      if (appPath) {
+        // If we have an app path, check if it exists
+        installed = existsSync(appPath);
+      } else {
+        // For apps without specific app paths (like Claude Code, Gemini),
+        // check if the parent directory of the config file exists
+        const configDir = dirname(configPath);
+        installed = existsSync(configDir);
+      }
+
+      // Check if Kapture is configured (only if config file exists)
+      const configured = existsSync(configPath) && isKaptureConfigured(configPath, config.configKey);
+
       results[config.key] = {
         installed,
         configured,
@@ -199,10 +233,10 @@ export function detectAssistants(): Record<string, AssistantStatus> {
 
 export function configureAssistants(assistantsToConfig: Record<string, boolean>): Record<string, { success: boolean; error?: string }> {
   const results: Record<string, { success: boolean; error?: string }> = {};
-  
+
   for (const [assistantKey, shouldConfigure] of Object.entries(assistantsToConfig)) {
     results[assistantKey] = updateAssistantConfig(assistantKey, shouldConfigure);
   }
-  
+
   return results;
 }

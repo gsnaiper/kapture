@@ -90,7 +90,7 @@ This single command starts the server and handles stdio-to-WebSocket translation
   "mcpServers": {
     "kapture": {
       "command": "npx",
-      "args": ["-y", "kapture-mcp", "bridge"]
+      "args": ["-y", "kapture-mcp@latest", "bridge"]
     }
   }
 }
@@ -144,7 +144,7 @@ Each client should use the same bridge command configuration:
   "mcpServers": {
     "kapture": {
       "command": "npx",
-      "args": ["-y", "kapture-mcp", "bridge"]
+      "args": ["-y", "kapture-mcp@latest", "bridge"]
     }
   }
 }
@@ -156,14 +156,14 @@ Each client should use the same bridge command configuration:
   "cline.mcpServers": {
     "kapture": {
       "command": "npx",
-      "args": ["-y", "kapture-mcp", "bridge"]
+      "args": ["-y", "kapture-mcp@latest", "bridge"]
     }
   }
 }
 ```
 
 **Other MCP Clients**:
-Use the same configuration pattern with `"command": "npx"` and `"args": ["-y", "kapture-mcp", "bridge"]`.
+Use the same configuration pattern with `"command": "npx"` and `"args": ["-y", "kapture-mcp@latest", "bridge"]`.
 
 [See the complete multi-assistant guide →](https://williamkapke.github.io/kapture/MULTI_ASSISTANT_GUIDE.html)
 
