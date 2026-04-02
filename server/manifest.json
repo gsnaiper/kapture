@@ -1,0 +1,124 @@
+{
+  "dxt_version": "0.1",
+  "name": "kapture",
+  "display_name": "Kapture Browser Automation",
+  "version": "2.1.2",
+  "description": "Control web browsers through the Model Context Protocol using Chrome DevTools",
+  "long_description": "Kapture is a powerful browser automation tool that enables AI assistants like Claude to control web browsers through a Chrome DevTools extension. It provides a seamless bridge between MCP clients and browser automation, allowing you to navigate pages, interact with elements, capture screenshots, and extract information from websites.\n\nKey features:\n- Navigate and control browser tabs\n- Click, hover, and interact with page elements\n- Fill forms and input fields\n- Capture screenshots of pages or specific elements\n- Extract DOM content and query elements\n- Monitor console logs in real-time\n- Support for multiple simultaneous browser connections",
+  "author": {
+    "name": "William Kapke",
+    "url": "https://github.com/williamkapke"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/williamkapke/kapture"
+  },
+  "homepage": "https://williamkapke.github.io/kapture/",
+  "documentation": "https://williamkapke.github.io/kapture/MCP_USAGE.html",
+  "support": "https://github.com/williamkapke/kapture/issues",
+  "icon": "icon.png",
+  "keywords": ["browser", "automation", "chrome", "devtools", "web", "scraping", "testing"],
+  "license": "MIT",
+  "compatibility": {
+    "claude_desktop": ">=0.11.0",
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "node": ">=16.0.0"
+    }
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "dist/bridge.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/bridge.js"]
+    }
+  },
+  "tools": [
+    {
+      "name": "list_tabs",
+      "description": "List all connected browser tabs"
+    },
+    {
+      "name": "tab_detail",
+      "description": "Get detailed information about a specific tab"
+    },
+    {
+      "name": "navigate",
+      "description": "Navigate browser tab to specified URL"
+    },
+    {
+      "name": "back",
+      "description": "Navigate back in browser history"
+    },
+    {
+      "name": "forward",
+      "description": "Navigate forward in browser history"
+    },
+    {
+      "name": "reload",
+      "description": "Reload the current page"
+    },
+    {
+      "name": "show",
+      "description": "Bring the browser tab to the front and focus it"
+    },
+    {
+      "name": "click",
+      "description": "Click on a page element using CSS selector or XPath"
+    },
+    {
+      "name": "hover",
+      "description": "Hover over a page element"
+    },
+    {
+      "name": "focus",
+      "description": "Set focus on a page element"
+    },
+    {
+      "name": "blur",
+      "description": "Remove focus from a page element"
+    },
+    {
+      "name": "fill",
+      "description": "Fill an input field with a value"
+    },
+    {
+      "name": "select",
+      "description": "Select an option from a dropdown"
+    },
+    {
+      "name": "keypress",
+      "description": "Send keyboard events"
+    },
+    {
+      "name": "screenshot",
+      "description": "Capture screenshots of the page or specific elements"
+    },
+    {
+      "name": "dom",
+      "description": "Get HTML content of the page or element"
+    },
+    {
+      "name": "elements",
+      "description": "Query elements with detailed information"
+    },
+    {
+      "name": "elementsFromPoint",
+      "description": "Get elements at specific coordinates"
+    },
+    {
+      "name": "console_logs",
+      "description": "Get browser console logs"
+    },
+    {
+      "name": "new_tab",
+      "description": "Open a new browser tab"
+    },
+    {
+      "name": "close",
+      "description": "Close a browser tab"
+    }
+  ],
+  "tools_generated": true
+}

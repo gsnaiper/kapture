@@ -61,6 +61,9 @@ dist/
 extension.zip
 extension-build/
 
+# Desktop Extension builds
+*.dxt
+
 /extension/icons/generate-icons.html
 /extension/KaptureDevToolsPanel.jpg
 /extension/ScreenshotWithExtensionPanel.jpg
